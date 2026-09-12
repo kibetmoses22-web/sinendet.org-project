@@ -30,6 +30,16 @@ function json(statusCode, obj) {
   return { statusCode, headers: { ...CORS, 'Content-Type': 'application/json' }, body: JSON.stringify(obj) };
 }
 
+function normalizeTasks(tasks) {
+  if (!Array.isArray(tasks)) return [];
+  return tasks
+    .map((t) => ({
+      label: (t && t.label ? String(t.label) : '').slice(0, 120),
+      marks: t && t.marks !== '' && t.marks !== null && t.marks !== undefined && !isNaN(Number(t.marks)) ? Number(t.marks) : null,
+    }))
+    .filter((t) => t.label !== '' || t.marks !== null);
+}
+
 exports.handler = async (event) => {
   connectLambda(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
@@ -56,7 +66,7 @@ exports.handler = async (event) => {
     // ---- POST: create a new submission (any user, no login needed) ----
     if (event.httpMethod === 'POST') {
       const body = JSON.parse(event.body || '{}');
-      const { subject, studentName, assessmentNo, marks, photos, video, audio } = body;
+      const { subject, studentName, assessmentNo, marks, tasks, photos, video, audio } = body;
       if (!subject || !studentName || !assessmentNo) {
         return json(400, { error: 'subject, studentName and assessmentNo are required' });
       }
@@ -81,12 +91,18 @@ exports.handler = async (event) => {
         await mediaStore.set(audioKey, Buffer.from(audio.data, 'base64'), { metadata: { contentType: audio.type || 'audio/mpeg' } });
       }
 
+      const cleanTasks = normalizeTasks(tasks);
+      const totalMarks = cleanTasks.length
+        ? cleanTasks.reduce((s, t) => s + (t.marks || 0), 0)
+        : (marks === '' || marks === undefined || marks === null ? null : Number(marks));
+
       const record = {
         id,
         subject,
         studentName,
         assessmentNo,
-        marks: marks === '' || marks === undefined || marks === null ? null : Number(marks),
+        tasks: cleanTasks,
+        marks: totalMarks,
         photoKeys,
         videoKey,
         audioKey,
@@ -102,7 +118,7 @@ exports.handler = async (event) => {
         return json(401, { error: 'Admin login required' });
       }
       const body = JSON.parse(event.body || '{}');
-      const { id, subject, studentName, assessmentNo, marks, photos, video, audio, removePhotos, removeVideo, removeAudio } = body;
+      const { id, subject, studentName, assessmentNo, marks, tasks, photos, video, audio, removePhotos, removeVideo, removeAudio } = body;
       if (!id || !subject) return json(400, { error: 'id and subject are required' });
 
       const key = `${subject}/${id}.json`;
@@ -111,7 +127,17 @@ exports.handler = async (event) => {
 
       if (studentName) existing.studentName = studentName;
       if (assessmentNo) existing.assessmentNo = assessmentNo;
-      if (marks !== undefined) existing.marks = marks === '' ? null : Number(marks);
+
+      if (Array.isArray(tasks)) {
+        const cleanTasks = normalizeTasks(tasks);
+        existing.tasks = cleanTasks;
+        existing.marks = cleanTasks.length
+          ? cleanTasks.reduce((s, t) => s + (t.marks || 0), 0)
+          : (marks === '' || marks === undefined || marks === null ? null : Number(marks));
+      } else if (marks !== undefined) {
+        existing.marks = marks === '' ? null : Number(marks);
+      }
+
 
       if (removePhotos && existing.photoKeys?.length) {
         for (const k of existing.photoKeys) await mediaStore.delete(k);
