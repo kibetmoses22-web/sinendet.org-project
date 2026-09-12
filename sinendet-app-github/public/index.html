@@ -33,7 +33,10 @@
     margin:0;
     font-family:'IBM Plex Sans', sans-serif;
     color:var(--ink);
-    background:var(--paper);
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(35,46,66,0.05) 1px, transparent 0);
+    background-size:22px 22px;
     display:flex;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
@@ -53,6 +56,8 @@
     position:sticky;
     top:0;
     height:100vh;
+    box-shadow:2px 0 14px rgba(0,0,0,0.12);
+    border-top:3px solid var(--yellow);
   }
   #sidebar .brand{
     padding:4px 10px 18px 10px;
@@ -66,6 +71,11 @@
   #sidebar .brand p{margin:0; font-size:0.74rem; color:#AEBBC2; line-height:1.45;}
 
   #subject-list{flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:3px; padding-right:2px;}
+  .sidebar-section-label{
+    font-size:0.66rem; font-weight:600; text-transform:uppercase; letter-spacing:0.09em;
+    color:#7C8A96; padding:14px 10px 4px; opacity:0.85;
+  }
+  .sidebar-section-label:first-child{padding-top:2px;}
   .subject-btn{
     display:flex; align-items:center; gap:10px; width:100%; text-align:left;
     background:transparent; border:none; color:#D9E2DC;
@@ -91,12 +101,36 @@
   .ghost-btn:hover{background:var(--board-light); border-color:var(--yellow);}
 
   /* ---------- Main ---------- */
-  #main{flex:1; padding:34px 40px; max-width:1150px;}
+  #main{flex:1; padding:34px 40px; max-width:1150px; display:flex; flex-direction:column; min-height:100vh;}
+  #site-footer{
+    margin-top:auto; padding-top:32px; padding-bottom:8px; text-align:center;
+    font-size:0.78rem; color:#9BA69C; display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+  }
+  .footer-dot{opacity:0.6;}
   #subject-header{margin-bottom:22px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;}
   #subject-header h2{font-size:1.7rem;}
   #subject-header p{margin:6px 0 0; color:var(--ink-soft); font-size:0.92rem;}
   #sync-note{font-size:0.78rem; color:var(--motto-green); display:flex; align-items:center; gap:6px;}
   #sync-note .dot-live{width:7px; height:7px; border-radius:50%; background:var(--motto-green); display:inline-block; animation:pulse 2s infinite;}
+  #header-right{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+  #export-wrap{position:relative;}
+  .ghost-btn-light{
+    background:#fff; border:1px solid #D7CFB6; color:var(--ink); font-size:0.82rem;
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:500;
+    transition:border-color 0.15s ease;
+  }
+  .ghost-btn-light:hover{border-color:var(--blue);}
+  #export-menu{
+    display:none; position:absolute; right:0; top:calc(100% + 6px); background:#fff;
+    border:1px solid #E3DCC8; border-radius:9px; box-shadow:var(--shadow-md); overflow:hidden;
+    min-width:170px; z-index:30;
+  }
+  #export-menu.open{display:block;}
+  #export-menu button{
+    display:block; width:100%; text-align:left; background:none; border:none; padding:10px 14px;
+    font-size:0.85rem; font-family:inherit; cursor:pointer; color:var(--ink);
+  }
+  #export-menu button:hover{background:var(--paper-dim);}
   @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.35;}}
 
   .card{background:#fff; border:1px solid #E3DCC8; border-radius:var(--radius); padding:24px; box-shadow:var(--shadow-sm);}
@@ -118,6 +152,25 @@
   .required-star{color:var(--pink);}
   .remove-row{display:flex; align-items:center; gap:6px; margin-top:8px; font-size:0.78rem; color:var(--ink-soft);}
 
+  .tasks-section{margin-bottom:16px; background:var(--paper-dim); border:1px solid #E3DCC8; border-radius:9px; padding:14px 14px 12px;}
+  .tasks-label{display:block; font-size:0.76rem; font-weight:600; color:var(--ink-soft); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.03em;}
+  .task-row{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
+  .task-row input[type=text]{flex:2; min-width:0; padding:8px 10px; border:1px solid #D7CFB6; border-radius:7px; font-family:inherit; font-size:0.88rem; background:#fff;}
+  .task-row input[type=number]{flex:0 0 90px; width:90px; padding:8px 10px; border:1px solid #D7CFB6; border-radius:7px; font-family:inherit; font-size:0.88rem; background:#fff;}
+  .remove-task-btn{
+    flex-shrink:0; background:none; border:none; color:var(--pink); font-size:1.05rem;
+    cursor:pointer; width:26px; height:26px; line-height:1; border-radius:6px;
+  }
+  .remove-task-btn:hover{background:rgba(217,138,138,0.15);}
+  .add-task-btn{color:var(--motto-green); font-size:0.85rem; text-decoration:none; font-weight:600;}
+  .add-task-btn:hover{text-decoration:underline;}
+  .total-row{margin-top:10px; font-size:0.88rem; color:var(--ink-soft); border-top:1px dashed #D7CFB6; padding-top:10px;}
+  .total-row b{color:var(--ink); font-size:1rem;}
+
+  .marks-line{font-size:0.82rem; color:var(--ink-soft); background:var(--paper-dim); border-radius:7px; padding:7px 10px; margin-top:-2px;}
+  .marks-line b{color:var(--ink);}
+  .marks-line .task-chip{display:inline-block; margin-right:8px;}
+
   button.primary{
     background:var(--yellow); color:#2B2410; border:none; font-family:'Space Grotesk', sans-serif;
     font-weight:600; font-size:0.95rem; padding:12px 24px; border-radius:9px; cursor:pointer;
@@ -138,6 +191,11 @@
     background:#fff; border:1px solid #E3DCC8; border-radius:var(--radius); padding:17px;
     display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-sm);
     transition:box-shadow 0.15s ease, transform 0.15s ease;
+    animation:fadeInUp 0.35s ease both;
+  }
+  @keyframes fadeInUp{
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:translateY(0);}
   }
   .entry-card:hover{box-shadow:var(--shadow-md); transform:translateY(-2px);}
   .entry-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
@@ -147,6 +205,7 @@
   .photo-strip{display:flex; gap:6px; overflow-x:auto; padding-bottom:2px;}
   .photo-strip img{width:76px; height:76px; object-fit:cover; border-radius:7px; flex-shrink:0; border:1px solid #E3DCC8; cursor:zoom-in;}
   video, audio{width:100%; border-radius:7px; margin-top:2px;}
+  .media-label{font-size:0.72rem; font-weight:600; color:var(--ink-soft); letter-spacing:0.02em; margin-top:2px;}
   .entry-actions{display:flex; gap:14px; margin-top:2px;}
   .link-btn{background:none; border:none; font-size:0.78rem; cursor:pointer; padding:2px 0; text-decoration:underline;}
   .edit-btn{color:var(--blue);}
@@ -169,12 +228,26 @@
 
   @media (max-width: 760px){
     body{flex-direction:column;}
-    #sidebar{width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; padding:14px; align-items:center;}
-    #sidebar .brand, #admin-box{display:none;}
-    #subject-list{flex-direction:row;}
+    #sidebar{width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; padding:12px 14px; align-items:center; gap:10px;}
+    #sidebar .brand{display:none;}
+    #subject-list{flex-direction:row; flex:0 0 auto;}
+    .sidebar-section-label{display:none;}
     .subject-btn{flex-shrink:0; width:auto;}
+    #admin-box{
+      border-top:none; margin-top:0; padding:0; flex-shrink:0;
+      display:flex; align-items:center; margin-left:auto; padding-left:10px;
+      border-left:1px solid var(--board-line);
+    }
+    #admin-box .admin-status{display:none;}
+    #admin-box .ghost-btn{width:auto; white-space:nowrap; padding:9px 14px; font-size:0.8rem;}
     #main{padding:20px;}
     #subject-header{align-items:flex-start;}
+  }
+  @media (max-width: 480px){
+    #main{padding:16px 14px;}
+    .field-row{gap:12px;}
+    #entries{grid-template-columns:1fr;}
+    #login-modal{max-width:100%;}
   }
 </style>
 </head>
@@ -202,7 +275,17 @@
       <h2 id="subject-title"></h2>
       <p id="subject-count-text"></p>
     </div>
-    <div id="sync-note"><span class="dot-live"></span> Shared live across all devices</div>
+    <div id="header-right">
+      <div id="sync-note"><span class="dot-live"></span> Shared live across all devices</div>
+      <div id="export-wrap">
+        <button type="button" class="ghost-btn-light" id="export-toggle-btn">Download report ▾</button>
+        <div id="export-menu">
+          <button type="button" data-format="excel">Excel (.xlsx)</button>
+          <button type="button" data-format="word">Word (.doc)</button>
+          <button type="button" data-format="pdf">PDF (.pdf)</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -221,10 +304,13 @@
           <label for="assessmentNo">Assessment no. <span class="required-star">*</span></label>
           <input type="text" id="assessmentNo" required placeholder="e.g. CAT-2 or Project 3">
         </div>
-        <div class="field">
-          <label for="marks">Marks</label>
-          <input type="number" id="marks" min="0" max="100" placeholder="e.g. 78">
-        </div>
+      </div>
+
+      <div class="tasks-section">
+        <label class="tasks-label">Tasks &amp; marks (optional)</label>
+        <div id="tasks-list"></div>
+        <button type="button" id="add-task-btn" class="link-btn add-task-btn">+ Add a task</button>
+        <div class="total-row">Total marks: <b id="total-marks-display">0</b></div>
       </div>
 
       <div class="field-row">
@@ -265,6 +351,12 @@
     <div id="entries"></div>
     <div id="empty-state" style="display:none;"></div>
   </div>
+
+  <footer id="site-footer">
+    <span>© <span id="footer-year"></span> Sinendet Mixed Day Senior School — Project Log</span>
+    <span class="footer-dot">·</span>
+    <span>Powered by Rotich Moses</span>
+  </footer>
 </main>
 
 <div id="lightbox"><img id="lightbox-img" src="" alt=""></div>
@@ -295,17 +387,17 @@
 const API = '/api';
 
 const SUBJECTS = [
-  {id:'core-maths', name:'Core Mathematics', tag:'yellow'},
-  {id:'chemistry', name:'Chemistry', tag:'green-tag'},
-  {id:'physics', name:'Physics', tag:'green-tag'},
-  {id:'biology', name:'Biology', tag:'green-tag'},
-  {id:'agriculture', name:'Agriculture', tag:'green-tag'},
-  {id:'general-science', name:'General Science', tag:'green-tag'},
-  {id:'english', name:'English', tag:'blue'},
-  {id:'kiswahili', name:'Kiswahili', tag:'blue'},
-  {id:'pe', name:'Physical Education', tag:'pink'},
-  {id:'csl', name:'CSL', tag:'purple-tag'},
-  {id:'ict', name:'ICT', tag:'purple-tag'},
+  {id:'core-maths', name:'Core Mathematics', tag:'yellow', group:'Mathematics'},
+  {id:'chemistry', name:'Chemistry', tag:'green-tag', group:'Sciences'},
+  {id:'physics', name:'Physics', tag:'green-tag', group:'Sciences'},
+  {id:'biology', name:'Biology', tag:'green-tag', group:'Sciences'},
+  {id:'agriculture', name:'Agriculture', tag:'green-tag', group:'Sciences'},
+  {id:'general-science', name:'General Science', tag:'green-tag', group:'Sciences'},
+  {id:'english', name:'English', tag:'blue', group:'Languages'},
+  {id:'kiswahili', name:'Kiswahili', tag:'blue', group:'Languages'},
+  {id:'pe', name:'Physical Education', tag:'pink', group:'Other'},
+  {id:'csl', name:'CSL', tag:'purple-tag', group:'Other'},
+  {id:'ict', name:'ICT', tag:'purple-tag', group:'Other'},
 ];
 
 const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // keep uploads comfortably under the serverless request limit
@@ -338,7 +430,15 @@ async function fetchCount(subjectId){
 async function renderSidebar(){
   const list = document.getElementById('subject-list');
   list.innerHTML = '';
+  let lastGroup = null;
   for(const subj of SUBJECTS){
+    if(subj.group !== lastGroup){
+      const label = document.createElement('div');
+      label.className = 'sidebar-section-label';
+      label.textContent = subj.group;
+      list.appendChild(label);
+      lastGroup = subj.group;
+    }
     const count = await fetchCount(subj.id);
     const btn = document.createElement('button');
     btn.className = 'subject-btn' + (subj.id===currentSubject ? ' active' : '');
@@ -432,11 +532,28 @@ function buildEntryCard(r){
   const meta = document.createElement('div');
   meta.className = 'entry-meta';
   meta.innerHTML = `<span>Assessment: <b>${escapeHtml(r.assessmentNo)}</b></span>` +
-    (r.marks !== null && r.marks !== undefined ? `<span>Marks: <b>${escapeHtml(String(r.marks))}</b></span>` : '') +
     `<span>${new Date(r.createdAt).toLocaleDateString()}</span>`;
   card.appendChild(meta);
 
+  if(r.tasks && r.tasks.length){
+    const marksLine = document.createElement('div');
+    marksLine.className = 'marks-line';
+    const chips = r.tasks.map(t => `<span class="task-chip">${escapeHtml(t.label || 'Task')}: <b>${t.marks ?? '—'}</b></span>`).join('');
+    marksLine.innerHTML = `${chips} <span class="task-chip">Total: <b>${r.marks ?? 0}</b></span>`;
+    card.appendChild(marksLine);
+  }else if(r.marks !== null && r.marks !== undefined){
+    const marksLine = document.createElement('div');
+    marksLine.className = 'marks-line';
+    marksLine.innerHTML = `Marks: <b>${escapeHtml(String(r.marks))}</b>`;
+    card.appendChild(marksLine);
+  }
+
   if(r.photoKeys && r.photoKeys.length){
+    const label = document.createElement('div');
+    label.className = 'media-label';
+    label.textContent = `📷 ${r.photoKeys.length} photo${r.photoKeys.length===1?'':'s'}`;
+    card.appendChild(label);
+
     const strip = document.createElement('div');
     strip.className = 'photo-strip';
     r.photoKeys.forEach(key=>{
@@ -450,6 +567,11 @@ function buildEntryCard(r){
   }
 
   if(r.videoKey){
+    const label = document.createElement('div');
+    label.className = 'media-label';
+    label.textContent = '🎬 Video';
+    card.appendChild(label);
+
     const vid = document.createElement('video');
     vid.controls = true;
     vid.src = `${API}/media?key=${encodeURIComponent(r.videoKey)}`;
@@ -457,6 +579,11 @@ function buildEntryCard(r){
   }
 
   if(r.audioKey){
+    const label = document.createElement('div');
+    label.className = 'media-label';
+    label.textContent = '🎧 Audio';
+    card.appendChild(label);
+
     const aud = document.createElement('audio');
     aud.controls = true;
     aud.src = `${API}/media?key=${encodeURIComponent(r.audioKey)}`;
@@ -510,6 +637,56 @@ function handleUnauthorized(){
   alert('Your admin session has expired. Please sign in again.');
 }
 
+/* ---------------- Tasks & marks ---------------- */
+
+function addTaskRow(label, marks){
+  const list = document.getElementById('tasks-list');
+  const row = document.createElement('div');
+  row.className = 'task-row';
+  row.innerHTML = `
+    <input type="text" class="task-label" placeholder="e.g. Task ${list.children.length + 1}" value="${escapeAttr(label || '')}">
+    <input type="number" class="task-marks" placeholder="Marks" min="0" value="${marks === null || marks === undefined ? '' : marks}">
+    <button type="button" class="remove-task-btn" title="Remove task">✕</button>
+  `;
+  row.querySelector('.remove-task-btn').onclick = ()=>{ row.remove(); recalcTotal(); };
+  row.querySelector('.task-marks').addEventListener('input', recalcTotal);
+  list.appendChild(row);
+}
+
+function recalcTotal(){
+  const rows = document.querySelectorAll('#tasks-list .task-row');
+  let total = 0;
+  rows.forEach(row=>{
+    const v = parseFloat(row.querySelector('.task-marks').value);
+    if(!isNaN(v)) total += v;
+  });
+  document.getElementById('total-marks-display').textContent = total;
+}
+
+function resetTasksSection(){
+  document.getElementById('tasks-list').innerHTML = '';
+  addTaskRow('', '');
+  recalcTotal();
+}
+
+function collectTasks(){
+  const rows = document.querySelectorAll('#tasks-list .task-row');
+  const tasks = [];
+  rows.forEach(row=>{
+    const label = row.querySelector('.task-label').value.trim();
+    const marksRaw = row.querySelector('.task-marks').value;
+    if(label === '' && marksRaw === '') return; // skip fully empty rows
+    tasks.push({ label, marks: marksRaw === '' ? null : Number(marksRaw) });
+  });
+  return tasks;
+}
+
+document.getElementById('add-task-btn').onclick = ()=> addTaskRow('', '');
+
+function escapeAttr(str){
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
 /* ---------------- Lightbox ---------------- */
 
 function openLightbox(src){
@@ -529,7 +706,16 @@ function enterEditMode(record){
   document.getElementById('submit-btn').textContent = 'Save changes';
   document.getElementById('studentName').value = record.studentName;
   document.getElementById('assessmentNo').value = record.assessmentNo;
-  document.getElementById('marks').value = record.marks ?? '';
+
+  document.getElementById('tasks-list').innerHTML = '';
+  if(record.tasks && record.tasks.length){
+    record.tasks.forEach(t => addTaskRow(t.label, t.marks));
+  }else if(record.marks !== null && record.marks !== undefined){
+    addTaskRow('Marks', record.marks);
+  }else{
+    addTaskRow('', '');
+  }
+  recalcTotal();
 
   document.getElementById('removePhotosRow').style.display = record.photoKeys?.length ? 'flex' : 'none';
   document.getElementById('removeVideoRow').style.display = record.videoKey ? 'flex' : 'none';
@@ -547,6 +733,7 @@ function exitEditMode(){
   document.getElementById('cancel-edit-btn').style.display = 'none';
   document.getElementById('submit-btn').textContent = 'Save project';
   document.getElementById('upload-form').reset();
+  resetTasksSection();
   document.getElementById('removePhotosRow').style.display = 'none';
   document.getElementById('removeVideoRow').style.display = 'none';
   document.getElementById('removeAudioRow').style.display = 'none';
@@ -576,7 +763,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e)=>{
 
   const studentName = document.getElementById('studentName').value.trim();
   const assessmentNo = document.getElementById('assessmentNo').value.trim();
-  const marksVal = document.getElementById('marks').value;
+  const tasks = collectTasks();
   const photoFiles = Array.from(document.getElementById('photos').files);
   const videoFile = document.getElementById('video').files[0] || null;
   const audioFile = document.getElementById('audio').files[0] || null;
@@ -608,7 +795,7 @@ document.getElementById('upload-form').addEventListener('submit', async (e)=>{
         id: editingRecord.id,
         subject: editingRecord.subject,
         studentName, assessmentNo,
-        marks: marksVal === '' ? '' : Number(marksVal),
+        tasks,
         photos, video, audio,
         removePhotos: document.getElementById('removePhotos').checked,
         removeVideo: document.getElementById('removeVideo').checked,
@@ -621,12 +808,13 @@ document.getElementById('upload-form').addEventListener('submit', async (e)=>{
       status.textContent = 'Changes saved.';
       exitEditMode();
     }else{
-      const payload = { subject: currentSubject, studentName, assessmentNo, marks: marksVal === '' ? '' : Number(marksVal), photos, video, audio };
+      const payload = { subject: currentSubject, studentName, assessmentNo, tasks, photos, video, audio };
       const res = await fetch(`${API}/submissions`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if(!res.ok){ const e = await res.json().catch(()=>({})); throw new Error(e.error || 'Save failed'); }
       status.className = 'success';
       status.textContent = 'Project saved.';
       document.getElementById('upload-form').reset();
+      resetTasksSection();
     }
 
     renderSidebar();
@@ -696,8 +884,151 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+/* ---------------- Export / download ---------------- */
+
+function loadScriptOnce(src){
+  return new Promise((resolve, reject)=>{
+    const existing = document.querySelector(`script[data-src="${src}"]`);
+    if(existing){
+      if(existing.dataset.loaded === 'true') return resolve();
+      existing.addEventListener('load', ()=>resolve());
+      existing.addEventListener('error', reject);
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = src;
+    s.dataset.src = src;
+    s.onload = ()=>{ s.dataset.loaded = 'true'; resolve(); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function taskSummaryText(r){
+  if(r.tasks && r.tasks.length){
+    return r.tasks.map(t => `${t.label || 'Task'}: ${t.marks ?? '-'}`).join('; ');
+  }
+  return '';
+}
+
+async function getExportRows(){
+  const rows = await loadRows();
+  const subj = SUBJECTS.find(s=>s.id===currentSubject);
+  return { subjectName: subj.name, rows: rows.slice().sort((a,b)=> a.studentName.localeCompare(b.studentName)) };
+}
+
+function exportFileBase(subjectName){
+  const date = new Date().toISOString().slice(0,10);
+  return `${subjectName.replace(/\s+/g,'-')}-projects-${date}`;
+}
+
+async function exportExcel(){
+  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+  const { subjectName, rows } = await getExportRows();
+  const header = ['Student Name', 'Assessment No.', 'Task Breakdown', 'Total Marks', 'Date'];
+  const data = [header, ...rows.map(r => [
+    r.studentName, r.assessmentNo, taskSummaryText(r),
+    r.marks ?? '', new Date(r.createdAt).toLocaleDateString()
+  ])];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:22},{wch:16},{wch:40},{wch:12},{wch:14}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, subjectName.slice(0,31));
+  XLSX.writeFile(wb, `${exportFileBase(subjectName)}.xlsx`);
+}
+
+async function exportWord(){
+  const { subjectName, rows } = await getExportRows();
+  const tableRows = rows.map(r => `
+    <tr>
+      <td>${escapeHtml(r.studentName)}</td>
+      <td>${escapeHtml(r.assessmentNo)}</td>
+      <td>${escapeHtml(taskSummaryText(r))}</td>
+      <td>${r.marks ?? ''}</td>
+      <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+    </tr>`).join('');
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="utf-8"><title>${escapeHtml(subjectName)} — Project Log</title></head>
+    <body>
+      <h2>${escapeHtml(subjectName)} — Project Log</h2>
+      <p>Sinendet Mixed Day Senior School — exported ${new Date().toLocaleDateString()}</p>
+      <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; width:100%; font-family:Calibri, Arial, sans-serif; font-size:11pt;">
+        <thead>
+          <tr style="background:#232E42; color:#fff;">
+            <th>Student Name</th><th>Assessment No.</th><th>Task Breakdown</th><th>Total Marks</th><th>Date</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </body></html>`;
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${exportFileBase(subjectName)}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function exportPdf(){
+  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+  const { subjectName, rows } = await getExportRows();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(14);
+  doc.text(`${subjectName} — Project Log`, 14, 16);
+  doc.setFontSize(9);
+  doc.text(`Sinendet Mixed Day Senior School — exported ${new Date().toLocaleDateString()}`, 14, 22);
+  doc.autoTable({
+    startY: 28,
+    head: [['Student Name', 'Assessment No.', 'Task Breakdown', 'Total', 'Date']],
+    body: rows.map(r => [
+      r.studentName, r.assessmentNo, taskSummaryText(r),
+      String(r.marks ?? ''), new Date(r.createdAt).toLocaleDateString()
+    ]),
+    headStyles: { fillColor: [35, 46, 66] },
+    styles: { fontSize: 8, cellWidth: 'wrap' },
+    columnStyles: { 2: { cellWidth: 60 } },
+  });
+  doc.save(`${exportFileBase(subjectName)}.pdf`);
+}
+
+const exportToggleBtn = document.getElementById('export-toggle-btn');
+const exportMenu = document.getElementById('export-menu');
+exportToggleBtn.onclick = (e)=>{
+  e.stopPropagation();
+  exportMenu.classList.toggle('open');
+};
+document.addEventListener('click', ()=> exportMenu.classList.remove('open'));
+
+exportMenu.querySelectorAll('button').forEach(btn=>{
+  btn.onclick = async (e)=>{
+    e.stopPropagation();
+    exportMenu.classList.remove('open');
+    const originalText = exportToggleBtn.textContent;
+    exportToggleBtn.textContent = 'Preparing…';
+    exportToggleBtn.disabled = true;
+    try{
+      if(btn.dataset.format === 'excel') await exportExcel();
+      else if(btn.dataset.format === 'word') await exportWord();
+      else if(btn.dataset.format === 'pdf') await exportPdf();
+    }catch(err){
+      alert('Could not generate that file: ' + err.message);
+    }finally{
+      exportToggleBtn.textContent = originalText;
+      exportToggleBtn.disabled = false;
+    }
+  };
+});
+
 /* ---------------- Init ---------------- */
 (async function init(){
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  resetTasksSection();
   await renderSidebar();
   renderHeader();
   renderEntries();
