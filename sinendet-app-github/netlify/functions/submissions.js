@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+const { getStore, connectLambda } = require('@netlify/blobs');
 const crypto = require('crypto');
 
 const CORS = {
@@ -31,6 +31,7 @@ function json(statusCode, obj) {
 }
 
 exports.handler = async (event) => {
+  connectLambda(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
 
   const store = getStore('submissions');
