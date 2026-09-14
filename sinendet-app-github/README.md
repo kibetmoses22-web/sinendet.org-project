@@ -69,10 +69,12 @@ automatically rebuilds and redeploys within a minute or two, no extra steps.
 
 ## Things to know
 
-- **File size**: uploads (photos + video + audio combined) are capped at
-  4MB per submission in the app itself, because the underlying serverless
-  function can't reliably accept much more in one request. Ask students/
-  teachers to keep videos short and compress large photos.
+- **File size**: photos, video, and audio can each be up to **100MB per
+  file**. Large uploads (and the "Download report" feature for lots of
+  videos) rely on Netlify's Blobs storage, which has generous but not
+  unlimited space on the free tier — if the school accumulates a very large
+  video library over time, keep an eye on usage in the Netlify dashboard
+  under **Data & storage → Blobs**.
 - **Admin login is intentionally simple**: one shared username/password for
   whoever administers the site, not individual accounts. Fine for a small
   internal school tool — don't reuse a password you care about elsewhere.
